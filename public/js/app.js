@@ -142,15 +142,9 @@ const TMDB = {
      */
     async fetch(endpoint, params = {}) {
         const defaultParams = {
-            api_key: TMDB_CONFIG.API_KEY,
             language: TMDB_CONFIG.LANGUAGE,
             region: TMDB_CONFIG.REGION
         };
-
-        // Si no hay API key configurada, lanzar error
-        if (TMDB_CONFIG.API_KEY === 'TU_API_KEY_AQUI') {
-            throw new Error('API_KEY_NO_CONFIGURADA');
-        }
 
         const queryParams = new URLSearchParams({ ...defaultParams, ...params }).toString();
         const url = `${TMDB_CONFIG.BASE_URL}${endpoint}?${queryParams}`;
@@ -817,14 +811,6 @@ const App = {
 
             // Cargar vista inicial
             await this.loadTrending();
-
-            // Verificar API key
-            if (TMDB_CONFIG.API_KEY === 'TU_API_KEY_AQUI') {
-                Utils.showToast(
-                    '⚠️ Configura tu API key de TMDB en js/config.js',
-                    'error'
-                );
-            }
 
             // Verificar sesión guardada contra el servidor (asíncrono, no bloquea)
             Auth.verifySession().catch(err => {
@@ -1778,12 +1764,7 @@ const App = {
         console.error('App Error:', err);
         Render.showLoader(false);
 
-        if (err.message === 'API_KEY_NO_CONFIGURADA') {
-            Render.showError(
-                '⚠️ No has configurado tu API key de TMDB. Abre el archivo <code>js/config.js</code> y reemplaza <code>TU_API_KEY_AQUI</code> con tu clave personal.'
-            );
-            Utils.showToast('Configura tu API key en js/config.js', 'error');
-        } else if (err.message && err.message.includes('429')) {
+        if (err.message && err.message.includes('429')) {
             Render.showError('Demasiadas solicitudes. Espera un momento y vuelve a intentarlo.');
             Utils.showToast('Límite de solicitudes alcanzado', 'error');
         } else {

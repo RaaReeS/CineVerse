@@ -7,11 +7,18 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
-  "keywords": ["tmdb", "movies", "tv", "express", "sqlite"],
+  "keywords": [
+    "tmdb",
+    "movies",
+    "tv",
+    "express",
+    "sqlite"
+  ],
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "sql.js": "^1.11.0"

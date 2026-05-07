@@ -1,12 +1,9 @@
 /*
  * ============================================================
- *  CONFIGURACIÓN DE TMDB
+ *  CONFIGURACIÓN DE LA APLICACIÓN
  * ============================================================
- * Para obtener tu propia API key:
- * 1. Regístrate en https://www.themoviedb.org/
- * 2. Ve a https://www.themoviedb.org/settings/api
- * 3. Solicita una API key (es gratuita)
- * 4. Reemplaza el valor de TMDB_API_KEY con tu key
+ *  La API Key de TMDB ahora se gestiona desde el servidor
+ *  a través del proxy en /api/tmdb/* para no exponerla.
  * ============================================================
  */
 
@@ -21,13 +18,18 @@ const API_CONFIG = {
 };
 
 // ============================================================
-//  CONFIGURACIÓN DE TMDB
+//  CONFIGURACIÓN DE TMDB (proxy a través del backend)
 // ============================================================
 const TMDB_CONFIG = {
-    // ⚠️ REEMPLAZA ESTO CON TU PROPIA API KEY DE TMDB
-    API_KEY: '33a501b9c8e2a08ae860499747f83a6f',
+    // La API Key se gestiona desde el servidor (.env)
+    // Este valor ya no se usa; se mantiene por compatibilidad.
+    API_KEY: '__PROXY__',
 
-    BASE_URL: 'https://api.themoviedb.org/3',
+    // URL base apunta al proxy del backend (oculta la API Key)
+    BASE_URL: (window.location.origin && window.location.origin !== 'null')
+        ? window.location.origin + '/api/tmdb'
+        : 'http://localhost:3000/api/tmdb',
+
     IMG_BASE: 'https://image.tmdb.org/t/p',
 
     // Tamaños de imagen disponibles
@@ -55,7 +57,7 @@ const TMDB_CONFIG = {
  * Obtiene la URL completa para una imagen de poster
  * @param {string} path - Ruta relativa de la imagen
  * @param {string} size - Tamaño (small, medium, large, original)
- * @returns {string} URL completa o placeholder
+ * @returns {string} URL completa o null
  */
 TMDB_CONFIG.getPosterUrl = function(path, size = 'medium') {
     if (!path) return null;
@@ -66,7 +68,7 @@ TMDB_CONFIG.getPosterUrl = function(path, size = 'medium') {
  * Obtiene la URL completa para un backdrop
  * @param {string} path - Ruta relativa de la imagen
  * @param {string} size - Tamaño (small, large, original)
- * @returns {string} URL completa o placeholder
+ * @returns {string} URL completa o null
  */
 TMDB_CONFIG.getBackdropUrl = function(path, size = 'large') {
     if (!path) return null;

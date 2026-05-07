@@ -5,8 +5,12 @@
  *  Sirve el frontend estático y las APIs REST:
  *    - /api/auth/*      → Registro, login, perfil
  *    - /api/favorites/* → CRUD de favoritos
+ *    - /api/tmdb/*      → Proxy TMDB (oculta la API Key)
  * ============================================================
  */
+
+// Cargar variables de entorno desde .env
+require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
@@ -14,6 +18,7 @@ const cors = require('cors');
 const { initDatabase, closeDatabase } = require('./db');
 const authRoutes = require('./routes/auth');
 const favoritesRoutes = require('./routes/favorites');
+const tmdbRoutes = require('./routes/tmdb');
 
 // ============================================================
 //  CONFIGURACIÓN
@@ -54,6 +59,7 @@ app.use((req, res, next) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/favorites', favoritesRoutes);
+app.use('/api/tmdb', tmdbRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
