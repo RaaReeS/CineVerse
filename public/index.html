@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVerse - Películas y Series</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- ==================== NAVBAR ==================== -->
+    <header class="navbar">
+        <div class="navbar__inner">
+            <div class="navbar__brand">
+                <a href="#" class="navbar__logo" id="homeLink">
+                    <i class="fas fa-film"></i>
+                    <span>CineVerse</span>
+                </a>
+            </div>
+
+            <nav class="navbar__links" id="mainNav">
+                <a href="#" class="nav-link active" data-type="trending">Tendencias</a>
+                <a href="#" class="nav-link" data-type="movies">Películas</a>
+                <a href="#" class="nav-link" data-type="tv">Series</a>
+                <a href="#" class="nav-link nav-link--favorites" data-type="favorites" id="favoritesNavLink">
+                    <i class="fas fa-heart"></i> Favoritos
+                </a>
+            </nav>
+
+            <div class="navbar__actions">
+                <div class="search-box" id="searchBox">
+                    <input type="text" id="searchInput" placeholder="Buscar películas o series..." autocomplete="off">
+                    <button id="searchBtn" aria-label="Buscar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+
+                <!-- Auth section (login/register buttons) -->
+                <div class="auth-section" id="authSection">
+                    <button class="btn btn-login" id="loginBtn"><i class="fas fa-sign-in-alt"></i> <span>Entrar</span></button>
+                    <button class="btn btn-register" id="registerBtn"><i class="fas fa-user-plus"></i> <span>Registro</span></button>
+                </div>
+
+                <!-- User menu (when logged in) -->
+                <div class="user-menu" id="userMenu">
+                    <div class="user-avatar" id="userAvatar">?</div>
+                    <span class="user-name" id="userName">Usuario</span>
+                    <div class="user-dropdown">
+                        <button class="user-dropdown-item" id="favoritesDropdownBtn">
+                            <i class="fas fa-heart"></i> Mis Favoritos
+                        </button>
+                        <div class="user-dropdown-divider"></div>
+                        <button class="user-dropdown-item user-dropdown-item--logout" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+
+                <button class="theme-toggle" id="themeToggle" aria-label="Cambiar tema">
+                    <i class="fas fa-moon"></i>
+                </button>
+
+                <button class="filter-toggle" id="filterToggle" aria-label="Filtros">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+
+                <button class="navbar__hamburger" id="hamburger" aria-label="Menú">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== FILTER PANEL ==================== -->
+    <aside class="filter-panel" id="filterPanel">
+        <div class="filter-panel__header">
+            <h3><i class="fas fa-filter"></i> Filtros</h3>
+            <button id="closeFilters" aria-label="Cerrar filtros">&times;</button>
+        </div>
+        <div class="filter-panel__body">
+            <div class="filter-group">
+                <label>Tipo</label>
+                <select id="filterType">
+                    <option value="all">Todos</option>
+                    <option value="movie">Películas</option>
+                    <option value="tv">Series</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Género</label>
+                <select id="filterGenre">
+                    <option value="all">Todos</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Año desde</label>
+                <select id="filterYearFrom">
+                    <option value="">Cualquiera</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Ordenar por</label>
+                <select id="filterSort">
+                    <option value="popularity.desc">Popularidad</option>
+                    <option value="vote_average.desc">Puntuación</option>
+                    <option value="release_date.desc">Año (reciente)</option>
+                    <option value="release_date.asc">Año (antiguo)</option>
+                    <option value="title.asc">Título A-Z</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" id="applyFilters">
+                <i class="fas fa-check"></i> Aplicar Filtros
+            </button>
+            <button class="btn btn-secondary" id="resetFilters">
+                <i class="fas fa-undo"></i> Restablecer
+            </button>
+        </div>
+    </aside>
+
+    <!-- ==================== OVERLAY ==================== -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- ==================== HERO SECTION ==================== -->
+    <section class="hero" id="hero">
+        <div class="hero__bg" id="heroBg"></div>
+        <div class="hero__overlay"></div>
+        <div class="hero__content">
+            <span class="hero__badge" id="heroBadge">Película destacada</span>
+            <h1 class="hero__title" id="heroTitle">Loading...</h1>
+            <div class="hero__meta">
+                <span class="hero__year" id="heroYear"></span>
+                <span class="hero__rating" id="heroRating">
+                    <i class="fas fa-star"></i> <span></span>
+                </span>
+                <span class="hero__runtime" id="heroRuntime"></span>
+            </div>
+            <p class="hero__desc" id="heroDesc"></p>
+            <div class="hero__actions">
+                <button class="btn btn-primary btn-lg" id="heroPlayBtn">
+                    <i class="fas fa-play"></i> Ver Tráiler
+                </button>
+                <button class="btn btn-secondary btn-lg" id="heroInfoBtn">
+                    <i class="fas fa-info-circle"></i> Más Información
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <main class="main-content">
+        <div class="section-header">
+            <h2 id="sectionTitle">Tendencias</h2>
+            <div class="section-controls">
+                <div class="view-options">
+                    <button class="view-btn active" data-view="grid" aria-label="Vista cuadrícula">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn" data-view="list" aria-label="Vista lista">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading spinner -->
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p>Cargando...</p>
+        </div>
+
+        <!-- Error message -->
+        <div class="error-message" id="errorMessage">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p id="errorText">Ha ocurrido un error al cargar los datos.</p>
+            <button class="btn btn-primary" id="retryBtn">Reintentar</button>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="emptyState">
+            <i class="fas fa-film"></i>
+            <h3>Sin resultados</h3>
+            <p id="emptyText">No se encontraron resultados para tu búsqueda.</p>
+        </div>
+
+        <!-- Results grid -->
+        <div class="results-grid" id="resultsGrid"></div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="pagination">
+            <button class="page-btn" id="prevPage" aria-label="Anterior">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="page-info" id="pageInfo">Página 1</div>
+            <button class="page-btn" id="nextPage" aria-label="Siguiente">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="footer">
+        <div class="footer__inner">
+            <p>
+                <i class="fas fa-film"></i> CineVerse &mdash; Datos proporcionados por 
+                <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>
+            </p>
+            <p class="footer__disclaimer">
+                Esta aplicación es solo con fines educativos.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ==================== MODAL: DETALLE ==================== -->
+    <div class="modal" id="detailModal">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content modal__content--detail">
+            <button class="modal__close" id="detailClose">&times;</button>
+            <div class="detail" id="detailContainer">
+                <!-- Rellenado por JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: TRAILER ==================== -->
+    <div class="modal" id="trailerModal">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content modal__content--trailer">
+            <button class="modal__close" id="trailerClose">&times;</button>
+            <div class="trailer-container" id="trailerContainer">
+                <p class="trailer-placeholder">Cargando tráiler...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: LOGIN ==================== -->
+    <div class="modal" id="loginModal">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content modal__content--auth">
+            <button class="modal__close" id="loginClose">&times;</button>
+            <form class="auth-form" id="loginForm" autocomplete="off">
+                <h2 class="auth-form__title">Bienvenido de nuevo</h2>
+                <p class="auth-form__subtitle">Inicia sesión para guardar tus favoritos</p>
+                <div class="auth-form__error" id="loginError"></div>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Entrar
+                </button>
+                <p class="auth-form__footer">
+                    ¿No tienes cuenta? <a id="switchToRegister">Crear una</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: REGISTER ==================== -->
+    <div class="modal" id="registerModal">
+        <div class="modal__backdrop"></div>
+        <div class="modal__content modal__content--auth">
+            <button class="modal__close" id="registerClose">&times;</button>
+            <form class="auth-form" id="registerForm" autocomplete="off">
+                <h2 class="auth-form__title">Crear cuenta</h2>
+                <p class="auth-form__subtitle">Regístrate para guardar tus películas y series favoritas</p>
+                <div class="auth-form__error" id="registerError"></div>
+                <div class="form-group">
+                    <label for="registerUsername">Nombre de usuario</label>
+                    <input type="text" id="registerUsername" placeholder="usuario123" required minlength="3" maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Contraseña</label>
+                    <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Crear Cuenta
+                </button>
+                <p class="auth-form__footer">
+                    ¿Ya tienes cuenta? <a id="switchToLogin">Iniciar sesión</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATIONS ==================== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
